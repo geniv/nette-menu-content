@@ -24,7 +24,7 @@ Include in application
 neon configure:
 ```neon
 services:
-    - MenuContent(%tablePrefix%rule_)
+    - MenuContent(%tablePrefix%mc_)
 ```
 
 usage:
