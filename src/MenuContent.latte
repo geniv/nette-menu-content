@@ -1,0 +1,9 @@
+{snippet content}
+    {foreach $listMenu as $menu}
+        <a n:href="SelectMenu! $menu['id']" n:class="$menu['id']==$idMenu?active, ajax">{$menu['name']}</a><br>
+    {/foreach}
+
+    {foreach $listContent as $content}
+        {$content['content']|noescape}
+    {/foreach}
+{/snippet}
