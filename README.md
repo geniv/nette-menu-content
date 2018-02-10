@@ -29,7 +29,7 @@ services:
 
 usage:
 ```php
-protected function createComponentMenuContent(MenuContent $menuContent)
+protected function createComponentMenuContent(MenuContent $menuContent): MenuContent
 {
     // $menuContent->setTemplatePath(__DIR__ . '/templates/MenuContent.latte');
     return $menuContent;
