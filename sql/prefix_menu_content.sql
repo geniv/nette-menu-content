@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Počítač: localhost:3306
--- Vytvořeno: Čtv 08. úno 2018, 18:10
+-- Vytvořeno: Úte 20. úno 2018, 18:46
 -- Verze serveru: 10.1.26-MariaDB-0+deb9u1
 -- Verze PHP: 7.0.27-0+deb9u1
 
@@ -16,48 +16,56 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
+--
+-- Databáze: `netteweb`
+--
+
 -- --------------------------------------------------------
 
 --
--- Struktura tabulky `prefix_mc_menu`
+-- Struktura tabulky `prefix_menu_content`
 --
 
-CREATE TABLE `prefix_mc_menu` (
+CREATE TABLE `prefix_menu_content` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `id_locale` int(11) DEFAULT NULL,
-  `name` varchar(255) NOT NULL,
-  `position` bigint(20) UNSIGNED DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='menu';
+  `id_menu` bigint(20) UNSIGNED NOT NULL,
+  `content` text NOT NULL,
+  `active` tinyint(1) DEFAULT '0',
+  `position` bigint(20) UNSIGNED DEFAULT '0',
+  `added` datetime DEFAULT NULL,
+  `updated` datetime DEFAULT NULL,
+  `deleted` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='obsah';
 
 --
 -- Klíče pro exportované tabulky
 --
 
 --
--- Klíče pro tabulku `prefix_mc_menu`
+-- Klíče pro tabulku `prefix_menu_content`
 --
-ALTER TABLE `prefix_mc_menu`
+ALTER TABLE `prefix_menu_content`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_menu_locale_idx` (`id_locale`);
+  ADD KEY `fk_content_menu_idx` (`id_menu`);
 
 --
 -- AUTO_INCREMENT pro tabulky
 --
 
 --
--- AUTO_INCREMENT pro tabulku `prefix_mc_menu`
+-- AUTO_INCREMENT pro tabulku `prefix_menu_content`
 --
-ALTER TABLE `prefix_mc_menu`
+ALTER TABLE `prefix_menu_content`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- Omezení pro exportované tabulky
 --
 
 --
--- Omezení pro tabulku `prefix_mc_menu`
+-- Omezení pro tabulku `prefix_menu_content`
 --
-ALTER TABLE `prefix_mc_menu`
-  ADD CONSTRAINT `fk_menu_locale` FOREIGN KEY (`id_locale`) REFERENCES `hradejov_locale` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `prefix_menu_content`
+  ADD CONSTRAINT `fk_content_menu` FOREIGN KEY (`id_menu`) REFERENCES `prefix_menu` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
