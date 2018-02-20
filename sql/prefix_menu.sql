@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Počítač: localhost:3306
--- Vytvořeno: Čtv 08. úno 2018, 18:09
+-- Vytvořeno: Úte 20. úno 2018, 18:45
 -- Verze serveru: 10.1.26-MariaDB-0+deb9u1
 -- Verze PHP: 7.0.27-0+deb9u1
 
@@ -17,49 +17,52 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Struktura tabulky `prefix_mc_content`
+-- Databáze: `netteweb`
 --
 
-CREATE TABLE `prefix_mc_content` (
+-- --------------------------------------------------------
+
+--
+-- Struktura tabulky `prefix_menu`
+--
+
+CREATE TABLE `prefix_menu` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `id_rule_menu` bigint(20) UNSIGNED NOT NULL,
-  `content` text NOT NULL,
-  `active` tinyint(1) DEFAULT '0',
-  `position` bigint(20) UNSIGNED DEFAULT '0',
-  `added` datetime DEFAULT NULL,
-  `updated` datetime DEFAULT NULL,
-  `deleted` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='obsah';
+  `id_locale` bigint(20) UNSIGNED DEFAULT NULL,
+  `ident` varchar(100) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `position` bigint(20) UNSIGNED DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='menu';
 
 --
 -- Klíče pro exportované tabulky
 --
 
 --
--- Klíče pro tabulku `prefix_mc_content`
+-- Klíče pro tabulku `prefix_menu`
 --
-ALTER TABLE `prefix_mc_content`
+ALTER TABLE `prefix_menu`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_content_menu_idx` (`id_rule_menu`);
+  ADD KEY `fk_menu_locale_idx` (`id_locale`);
 
 --
 -- AUTO_INCREMENT pro tabulky
 --
 
 --
--- AUTO_INCREMENT pro tabulku `prefix_mc_content`
+-- AUTO_INCREMENT pro tabulku `prefix_menu`
 --
-ALTER TABLE `prefix_mc_content`
+ALTER TABLE `prefix_menu`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- Omezení pro exportované tabulky
 --
 
 --
--- Omezení pro tabulku `prefix_mc_content`
+-- Omezení pro tabulku `prefix_menu`
 --
-ALTER TABLE `prefix_mc_content`
-  ADD CONSTRAINT `fk_content_menu` FOREIGN KEY (`id_rule_menu`) REFERENCES `hradejov_rule_menu` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `prefix_menu`
+  ADD CONSTRAINT `fk_menu_locale` FOREIGN KEY (`id_locale`) REFERENCES `prefix_locale` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

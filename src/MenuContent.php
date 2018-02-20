@@ -2,6 +2,7 @@
 
 use Dibi\Connection;
 use Dibi\Fluent;
+use GeneralForm\ITemplatePath;
 use Locale\ILocale;
 use Nette\Application\UI\Control;
 use Nette\Caching\Cache;
@@ -14,14 +15,14 @@ use Nette\Localization\ITranslator;
  *
  * @author  geniv
  */
-class MenuContent extends Control
+class MenuContent extends Control implements ITemplatePath
 {
     // define constant table names
     const
         TABLE_NAME_MENU = 'menu',
-        TABLE_NAME_CONTENT = 'content';
+        TABLE_NAME_MENU_CONTENT = 'menu_content';
 
-    /** @var string tables name */
+    /** @var string */
     private $tableMenu, $tableContent;
     /** @var Connection */
     private $connection;
@@ -35,6 +36,8 @@ class MenuContent extends Control
     private $templatePath;
     /** @var int */
     private $idMenu = 0;
+    /** @var array */
+    private $templatePathByIdent = [];
 
 
     /**
@@ -52,7 +55,7 @@ class MenuContent extends Control
 
         // define table names
         $this->tableMenu = $prefix . self::TABLE_NAME_MENU;
-        $this->tableContent = $prefix . self::TABLE_NAME_CONTENT;
+        $this->tableContent = $prefix . self::TABLE_NAME_MENU_CONTENT;
 
         $this->connection = $connection;
         $this->idLocale = $locale->getId();
@@ -66,60 +69,57 @@ class MenuContent extends Control
     /**
      * Set template path.
      *
-     * @param string $templatePath
-     * @return $this
+     * @param string $path
      */
-    public function setTemplatePath(string $templatePath): self
+    public function setTemplatePath(string $path)
     {
-        $this->templatePath = $templatePath;
-        return $this;
+        $this->templatePath = $path;
+    }
+
+
+    /**
+     * Set template path by ident.
+     *
+     * @param string $identification
+     * @param string $path
+     */
+    public function setTemplatePathByIdent(string $identification, string $path)
+    {
+        $this->templatePathByIdent[$identification] = $path;
+    }
+
+
+    /**
+     * Set id locale.
+     *
+     * @param $idLocale
+     */
+    public function setIdLocale($idLocale)
+    {
+        $this->idLocale = $idLocale;
     }
 
 
     /**
      * Get list menu.
      *
+     * @param string $identification
+     * @param string $select
      * @return Fluent
      */
-    private function getListMenu(): Fluent
+    private function getListMenu(string $identification = '', $select = 'id, name'): Fluent
     {
-        $result = $this->connection->select('id, name')
+        $result = $this->connection->select($select)
             ->from($this->tableMenu)
             ->orderBy(['position' => 'asc']);
 
         if ($this->idLocale) {
-            //dump($this->idLocale);    //TODO doresit jazyky!
+            $result->where(['id_locale' => $this->idLocale]);
         }
-        return $result;
-    }
 
-
-    /**
-     * Get first id.
-     *
-     * @return int
-     */
-    private function getFirstId(): int
-    {
-        return $this->connection->select('id')
-            ->from($this->tableMenu)
-            ->orderBy(['position' => 'asc'])
-            ->fetchSingle();
-    }
-
-
-    /**
-     * Get list content.
-     *
-     * @param $idMenu
-     * @return Fluent
-     */
-    private function getListContent(int $idMenu): Fluent
-    {
-        $result = $this->connection->select('id, content, added, updated')
-            ->from($this->tableContent)
-            ->where(['id_rule_menu' => $idMenu, 'active' => true, 'deleted' => null])
-            ->orderBy(['position' => 'asc']);
+        if ($identification) {
+            $result->where(['ident' => $identification]);
+        }
         return $result;
     }
 
@@ -140,22 +140,45 @@ class MenuContent extends Control
 
 
     /**
-     * Render.
+     * Get list content.
+     *
+     * @param $idMenu
+     * @return Fluent
      */
-    public function render()
+    private function getListContent(int $idMenu): Fluent
+    {
+        $result = $this->connection->select('id, content, added, updated')
+            ->from($this->tableContent)
+            ->where(['id_rule_menu' => $idMenu, 'active' => true, 'deleted' => null])
+            ->orderBy(['position' => 'asc']);
+        return $result;
+    }
+
+
+    /**
+     * Render.
+     *
+     * @param string $identification
+     */
+    public function render(string $identification = '')
     {
         $template = $this->getTemplate();
 
         if (!$this->idMenu) {
-            $this->handleSelectMenu($this->getFirstId());
+            // select fist item and switch menu
+            $this->handleSelectMenu($this->getListMenu($identification, 'id')->fetchSingle());
         }
 
         $this->template->idMenu = $this->idMenu;
-        $this->template->listMenu = $this->getListMenu();
+        $this->template->listMenu = $this->getListMenu($identification);
         $this->template->listContent = $this->getListContent($this->idMenu);
 
         $template->setTranslator($this->translator);
-        $template->setFile($this->templatePath);
+        if ($identification && isset($this->templatePathByIdent[$identification])) {
+            $template->setFile($this->templatePathByIdent[$identification]);
+        } else {
+            $template->setFile($this->templatePath);
+        }
         $template->render();
     }
 }
