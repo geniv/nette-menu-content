@@ -165,8 +165,8 @@ class MenuContent extends Control implements ITemplatePath
         $template = $this->getTemplate();
 
         if (!$this->idMenu) {
-            // select fist item and switch menu
-            $this->handleSelectMenu($this->getListMenu($identification, 'id')->fetchSingle());
+            // select fist item and switch menu + fallback null data
+            $this->handleSelectMenu($this->getListMenu($identification, 'id')->fetchSingle() ?: 0);
         }
 
         $this->template->idMenu = $this->idMenu;
