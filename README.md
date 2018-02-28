@@ -10,7 +10,6 @@ or
 ```json
 "geniv/nette-menu-content": ">=1.0.0"
 ```
-//TODO udelat vykreslovani na instance
 
 require:
 ```json
