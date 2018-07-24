@@ -112,7 +112,7 @@ class MenuContent extends Control implements ITemplatePath
         $result = $this->connection->select($select)
             ->from($this->tableMenu)
             ->orderBy(['position' => 'asc']);
-
+//TODO optimalize query
         if ($this->idLocale) {
             $result->where(['id_locale' => $this->idLocale]);
         }
